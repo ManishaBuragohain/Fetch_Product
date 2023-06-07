@@ -1,0 +1,170 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Products by Category</title>
+    <style>
+      body {
+        font-family: Arial, sans-serif;
+        margin: 0;
+        padding: 20px;
+      }
+
+      h1 {
+        margin-bottom: 20px;
+        text-align: center;
+      }
+
+      .container {
+        display: flex;
+        flex-wrap: wrap;
+        justify-content: center;
+      }
+
+      .card {
+        width: 200px;
+        margin: 10px;
+        padding: 10px;
+        border: 1px solid #ccc;
+        border-radius: 4px;
+        box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+      }
+
+      .card-title {
+        font-weight: bold;
+        margin-bottom: 10px;
+      }
+
+      .card-info {
+        font-size: 14px;
+        color: #888;
+      }
+
+      .stock {
+        color: red;
+        font-weight: bold;
+        font-size: 13px;
+      }
+      button {
+        width: 150px;
+        height: 40px;
+        background-color: azure;
+        border: 2px solid aquamarine;
+        border-radius: 3px;
+      }
+      .firstBtn {
+        margin-left: 18px;
+        /* position: absolute;
+        left: 50%;
+        top: 10%; */
+      }
+    </style>
+  </head>
+  <body>
+    <!-- <h1>Products by Category</h1> -->
+
+    <button class="firstBtn" onclick="sortByRating()">Sort by Rating</button>
+    <button onclick="sortByDiscount()">Sort by Discount</button>
+    <button onclick="sortByPrice()">Sort by Price</button>
+    <div class="container" id="productContainer"></div>
+
+    <script>
+      var productContainer = document.getElementById('productContainer');
+      var productsArray = [];
+
+      let url = 'https://dummyjson.com/products?limit=100';
+
+      let fetchData = fetch(url);
+      fetchData
+        .then((resp) => resp.json())
+        .then((data) => {
+          data.products.forEach((item) => {
+            let product = {
+              id: item.id,
+              title: item.title,
+              category: item.category,
+              rating: item.rating,
+              discountPercentage: item.discountPercentage,
+              price: item.price,
+              stock: item.stock
+            };
+
+            productsArray.push(product);
+
+            var card = document.createElement('div');
+            card.className = 'card';
+
+            var title = document.createElement('h3');
+            title.className = 'card-title';
+            title.innerText = product.title;
+
+            var info = document.createElement('p');
+            info.className = 'card-info';
+            info.innerHTML = `<strong>Category:</strong> ${product.category}<br/>
+                              <strong>Rating:</strong> ${product.rating}<br/>
+                              <strong>Discount:</strong> ${product.discountPercentage}%<br/>
+                              <strong>Price:</strong> $${product.price}`;
+
+            card.appendChild(title);
+            card.appendChild(info);
+
+            if (product.stock < 50) {
+              var stock = document.createElement('p');
+              stock.className = 'stock';
+              stock.innerText = 'Hurry! Only a few items left';
+              card.appendChild(stock);
+            }
+
+            productContainer.appendChild(card);
+          });
+        });
+
+      function sortByRating() {
+        productsArray.sort((a, b) => b.rating - a.rating);
+        updateList();
+      }
+
+      function sortByDiscount() {
+        productsArray.sort((a, b) => b.discountPercentage - a.discountPercentage);
+        updateList();
+      }
+
+      function sortByPrice() {
+        productsArray.sort((a, b) => a.price - b.price);
+        updateList();
+      }
+
+      function updateList() {
+        productContainer.innerHTML = '';
+        productsArray.forEach((product) => {
+          var card = document.createElement('div');
+          card.className = 'card';
+
+          var title = document.createElement('h3');
+          title.className = 'card-title';
+          title.innerText = product.title;
+
+          var info = document.createElement('p');
+          info.className = 'card-info';
+          info.innerHTML = `<strong>Category:</strong> ${product.category}<br/>
+                            <strong>Rating:</strong> ${product.rating}<br/>
+                            <strong>Discount:</strong> ${product.discountPercentage}%<br/>
+                            <strong>Price:</strong> $${product.price}`;
+
+          card.appendChild(title);
+          card.appendChild(info);
+          if (product.stock < 50) {
+            var stock = document.createElement('p');
+            stock.className = 'stock';
+            stock.innerText = 'Hurry! Only a few items left';
+            card.appendChild(stock);
+          }
+
+          productContainer.appendChild(card);
+        });
+      }
+    </script>
+  </body>
+</html>
